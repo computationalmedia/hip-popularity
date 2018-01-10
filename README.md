@@ -6,7 +6,8 @@ This repository contains:
 - the link to [an interactive visualization system](#hip-visualization-system) for HIP;
 - [a short tutorial](#using-hip-and-the-active-dataset-a-short-tutorial) on exploring the ACTIVE dataset and fitting HIP to data;
 - the [ACTIVE twitted videos dataset](#the-active-dataset);
-- the code required for [fitting HIP to real data](#fitting-hip) and [forecasting future popularity with HIP](#forecasting-with-hip).
+- R code required for [fitting HIP to real data](#fitting-hip) and [forecasting future popularity with HIP](#forecasting-with-hip);
+- [Python code](#hip-in-python) for fitting HIP and forecasting future popularity.
 
 *Refereces*:  
 Rizoiu, M.-A., Xie, L., Sanner, S., Cebrian, M., Yu, H., & Van Hentenryck, P.
@@ -17,7 +18,7 @@ doi: [10.1145/3038912.3052650](http://doi.org/10.1145/3038912.3052650)
 
 Rizoiu, M.-A., & Xie, L. (2017). 
 **Online Popularity under Promotion: Viral Potential, Forecasting, and the Economics of Time**. 
-In *11th International AAAI Conference on Web and Social Media - ICWSM '17*, p. 10, Montréal, Canada, 2017.  
+In *11th International AAAI Conference on Web and Social Media - ICWSM '17*, pp. 182-191, Montréal, Canada, 2017.  
 [pdf at arxiv with supplementary material](https://arxiv.org/pdf/1703.01012.pdf)
 
 # HIP visualization system
@@ -40,6 +41,11 @@ The file `code/functions-fitting-data.R` contains all functions for simulating a
 source("code/requiredPackages.R")
 source("code/functions-fitting-data.R")
 ```
+
+    Loading required package: jsonlite
+    Loading required package: pracma
+    Loading required package: nloptr
+
 
 ## The ACTIVE dataset
 
@@ -325,20 +331,38 @@ axis(4, cex.main = 1.5, cex.axis = 1, cex.lab = 1.5,
                     length.out = 6)) )
 legend("topleft", legend = c("#views", "HIP fit", "HIP forecast", "#shares"), 
        col = c("black", "blue", "darkmagenta", "red"), lty = c(2, 1, 1, 1), bty = "n")
-
 ```
 
 
 ![png](util/HIP-fitting-usage_files/HIP-fitting-usage_32_0.png)
 
 
+HIP in Python
+===
+
+We have also implemented the HIP model in Python. We provide a main class `pyhip.py` and an exemplary script `pyhip_example.py`.
+The class contains code for fitting and forecast between two time series signals by using HIP model, similarly to the R code described above.
+
+```python
+test_vid = 'X0ZEt_GZfkA'
+daily_share, daily_view, daily_watch = active_videos[test_vid]
+num_train = 90
+num_test = 30
+num_initialization = 25
+
+from pyhip import HIP
+hip_model = HIP()
+hip_model.initial(daily_share, daily_view, num_train, num_test, num_initialization)
+hip_model.fit_with_bfgs()
+hip_model.print_parameters()
+hip_model.plot_func('YouTubeID={0}'.format(test_vid))
+```
+The figure below corresponds to fitting result of video [X0ZEt_GZfkA](https://www.youtube.com/watch?v=X0ZEt_GZfkA).
+
+![png](util/pyhip-fitting.png)
+
 License
 ===
 
 Both dataset and code are distributed under the *Creative Commons Attribution-NonCommercial 4.0 International* (CC BY-NC 4.0) license, a copy of which can be obtained [following this link](https://creativecommons.org/licenses/by-nc/4.0/legalcode). 
 If you require a different license, please contact us at [Marian-Andrei@rizoiu.eu](mailto:Marian-Andrei@rizoiu.eu) or [Lexing.Xie@anu.edu.au](mailto:Lexing.Xie@anu.edu.au).
-
-
-```R
-
-```
